@@ -266,6 +266,8 @@ int main(int argc, char* argv[]){
     double (*POLYFUNCTION)(double) = polynomialfunct;
     PolynomialDescent(TERMS,NUMPOINTS,ITERATIONS,TOLERANCE,STEPSIZE,MINK,MAXK,POLYFUNCTION,PX0,PX1);
 
+    cout << "\n\n\n\n";
+
     //Fourier stuff
     const double FX0 = 0;
     const double FX1 = 10;
