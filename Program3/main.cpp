@@ -7,7 +7,11 @@ using namespace std;
 
 const double G = 9.81;
 const double PI = 3.14159265;
-const double H = 0.001;
+const double H = 0.005; //seconds
+const unsigned int STEPS = 2000;
+const double X0 = PI/4;
+const double V0 = 0;
+const double L = 1;
 
 /*
 Runge Kutta to integrate the equations for motion of a pendulum
@@ -64,6 +68,7 @@ struct pendulum{
         vn = v + (1/6)*(k1 + (2*k2) + (2*k3) + k4);
     }
 
+    //output and run simulation
     void mainloop(int steps, double h, ofstream * outf, bool verbose=false){
         printf("   step |       x |      v \n %6d | %.6f | %.6f \n",0,xn,vn);
         (*outf) << "n,x,v\n";
@@ -71,19 +76,8 @@ struct pendulum{
         for(int i = 0; i < steps; i++){
             oldx = xn;
 
-            /*k1 = h * vn;
-            k2 = h * (vn + (h/2));
-            k3 = h * (vn + (h/2));
-            k4 = h * (vn + h);
-            xn += (1.0/6)*(k1 + (2*k2) + (2*k3) + k4);*/
             xn += h*vn;
             vn += h*dvdt(oldx);
-            /*
-            k1 = h * dvdt(oldx);
-            k2 = h * dvdt(oldx + (h/2));
-            k3 = h * dvdt(oldx + (h/2));
-            k4 = h * dvdt(oldx + h);
-            vn += (1.0/6)*(k1 + (2*k2) + (2*k3) + k4);*/
 
             if(verbose){
                 (*outf) << i+1 << "," << xn << "," << vn << "\n";
@@ -93,38 +87,15 @@ struct pendulum{
     }
 };
 
-/*
-double rungekutta(double (*f)(pendulum*,double, double), pendulum* p, double a, double b, double h){
-    //solves for b(x(n+1))
-    double k1 = h * (*f)(p,a,b);
-    double k2 = h * (*f)(p,a+(h/2),b+(k1/2));
-    double k3 = h * (*f)(p,a+(h/2),b+(k2/2));
-    double k4 = h * (*f)(p,a+h,b+k3);
-    return (b + (1/6)*(k1 + 2*k2 + 2*k3 + k4));
-}
-
-double fx(pendulum* p, double vn, double xn){
-    return vn;
-}
-
-double fv(pendulum* p, double xn, double vn){
-    return -(G/(p->L))*sin(xn);
-}
-*/
-
 int main(int argc, char* argv[]){
-    double x0 = 0.1;
-    double v0 = 0;
-    double l = 1;
-    int steps = 10000;
-    pendulum p(x0,v0,l);
+    pendulum p(X0,V0,L);
     if(argc < 2){
         cout << "Error: Need filename\n";
         return 1;
     }
     ofstream outf(argv[1], ios::out);
-    printf("x0: %f\nv0: %f\n L: %f\n n: %d\n h: %f\n", x0,v0,l,steps,H);
-    p.mainloop(steps,H,&outf,true);
+    printf("x0: %f\nv0: %f\n L: %f\n n: %d\n h: %f\n", X0,V0,l,STEPS,H);
+    p.mainloop(STEPS,H,&outf,true);
 
     return 0;
 }
